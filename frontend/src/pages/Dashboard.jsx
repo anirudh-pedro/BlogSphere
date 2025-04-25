@@ -19,7 +19,7 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard-container">
-            <h2>Your Blog Posts</h2>
+            <h2>Your Blog Posts by anirudh</h2>
             {blogs.length === 0 ? (
                 <p>No blogs published yet.</p>
             ) : (
