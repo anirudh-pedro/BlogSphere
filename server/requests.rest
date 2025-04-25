@@ -1,0 +1,12 @@
+### Register a New User
+GET http://localhost:5000/api/blogs
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODAwYWExYWIxYjMzZTdmZTg5MmUzMjgiLCJ1c2VybmFtZSI6InRlc3QiLCJlbWFpbCI6InRlc3RAZ21haWwuY29tIiwiaWF0IjoxNzQ0OTg0Njk2LCJleHAiOjE3NDQ5ODgyOTZ9.ikRxTeyAt0rwi6hYbssaDByuoBrn6zlfkWhgzVpyEnk
+
+# {
+#   "title": "My First Blog",
+#   "topic": "Technology",
+#   "content": "This is the content of my first blog.",
+#   "image": "http://example.com/image.jpg",
+#   "imageDescription": "An image related to technology."
+# }
