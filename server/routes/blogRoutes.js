@@ -81,6 +81,62 @@ router.put('/:id', authenticateUser, async (req, res) => {
   }
 });
 
+// Add this to your blogRoutes.js file
+
+// GET /api/blogs/user/:userId
+// router.get('/user/:userId', authenticateUser, async (req, res) => {
+//   try {
+//     // Ensure the requested userId matches the authenticated user
+//     if (req.params.userId !== req.user.userId) {
+//       return res.status(403).json({ 
+//         message: "You are not authorized to view these posts" 
+//       });
+//     }
+    
+//     const blogs = await Blog.find({ author: req.params.userId })
+//       .sort({ createdAt: -1 })
+//       .populate('author', 'username');
+      
+//     res.status(200).json(blogs);
+//   } catch (error) {
+//     res.status(500).json({ 
+//       message: "Failed to fetch user's blogs", 
+//       error: error.message 
+//     });
+//   }
+// });
+
+
+// Add this to your blogRoutes.js file
+
+// GET /api/blogs/user/:userId
+router.get('/user/:userId', authenticateUser, async (req, res) => {
+  try {
+    // Check if the requested userId matches the authenticated user
+    // This is optional security - remove if you want users to be able to view other users' posts
+    if (req.params.userId !== req.user.userId) {
+      return res.status(403).json({ 
+        message: "You are not authorized to view these posts" 
+      });
+    }
+    
+    // Find blogs by the author field matching userId
+    const blogs = await Blog.find({ author: req.params.userId })
+      .sort({ createdAt: -1 })
+      .populate('author', 'username');
+      
+    // Return the blogs
+    res.status(200).json(blogs);
+  } catch (error) {
+    console.error('Error fetching user blogs:', error);
+    res.status(500).json({ 
+      message: "Failed to fetch user's blogs", 
+      error: error.message 
+    });
+  }
+});
+// Note: Add this route to your existing blogRoutes.js file
+
 // DELETE /api/blogs/:id
 router.delete('/:id', authenticateUser, async (req, res) => {
   try {
