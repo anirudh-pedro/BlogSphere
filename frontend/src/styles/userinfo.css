@@ -44,12 +44,19 @@
   margin-bottom: 60px;
 }
 
+/* Enhanced Profile Avatar Styling */
 .profile-avatar-container {
   position: absolute;
   top: 70px;
   left: 40px;
   display: flex;
   align-items: flex-end;
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
 }
 
 .profile-avatar {
@@ -60,44 +67,132 @@
   border: 4px solid white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   background-color: #f2f2f2;
+  transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.profile-avatar.preview-active {
+  animation: pulse 2s infinite;
+}
+
+.profile-avatar-wrapper:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white' width='24px' height='24px'%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
 }
 
 .profile-avatar-edit {
   margin-left: 10px;
+  position: relative;
 }
 
 .profile-upload-label {
-  display: inline-block;
-  padding: 5px 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;
+  padding: 6px 15px;
   background-color: #f2f2f2;
   border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  border: 1px solid #e6e6e6;
 }
 
 .profile-upload-label:hover {
   background-color: #e6e6e6;
+  transform: translateY(-1px);
 }
 
 .profile-upload-input {
   display: none;
 }
 
+/* Save button styling */
 .save-avatar-btn {
   margin-left: 10px;
-  padding: 5px 15px;
+  min-width: 70px;
+  padding: 6px 15px;
   background-color: #03a87c;
   color: white;
   border: none;
   border-radius: 20px;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(3, 168, 124, 0.2);
 }
 
 .save-avatar-btn:hover {
   background-color: #038f69;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(3, 168, 124, 0.25);
+}
+
+.save-avatar-btn:disabled {
+  background-color: #a0a0a0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Upload indicators and animations */
+.uploading-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #03a87c;
+  animation: spin 1s ease-in-out infinite;
+  margin-left: 5px;
+}
+
+/* File upload progress */
+.upload-progress-bar {
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  height: 3px;
+  background-color: #03a87c;
+  transition: width 0.3s ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(3, 168, 124, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(3, 168, 124, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(3, 168, 124, 0);
+  }
+}
+
+
+
+@keyframes slide-in {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .profile-info {
@@ -420,12 +515,31 @@
     padding: 6px 12px;
     font-size: 12px;
   }
+  
+  .save-avatar-btn, .profile-upload-label {
+    padding: 5px 12px;
+    font-size: 12px;
+    min-width: 60px;
+  }
 }
 
 @media (max-width: 576px) {
   .profile-avatar {
     width: 80px;
     height: 80px;
+  }
+  
+  .profile-avatar-container {
+    flex-wrap: wrap;
+  }
+  
+  .profile-avatar-edit, .save-avatar-btn {
+    margin-top: 8px;
+    margin-left: 0;
+  }
+  
+  .save-avatar-btn {
+    margin-left: 8px;
   }
   
   .profile-info {

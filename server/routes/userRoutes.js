@@ -2,7 +2,8 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-
+import { authenticateUser } from '../middleware/auth.js';
+import { verifyOwnership } from '../middleware/auth.js';
 const router = express.Router();
 
 // 🌟 User Registration
@@ -108,5 +109,48 @@ router.post("/logout", (req, res) => {
   
   res.json({ message: "Logged out successfully" });
 });
+
+// Add this route to your userRoutes.js file
+
+// Update Profile Image
+// Update Profile Image
+router.put("/update-profile", authenticateUser, verifyOwnership, async (req, res) => {
+  try {
+    const { userId, profileImage } = req.body;
+    
+    if (!profileImage) {
+      return res.status(400).json({ message: "Profile image is required" });
+    }
+    
+    // Validate that the profile image is a valid base64 string
+    if (!/^data:image\/(jpeg|png|gif|webp);base64,/.test(profileImage)) {
+      return res.status(400).json({ message: "Invalid image format" });
+    }
+    
+    // Update user profile in database
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profileImage },
+      { new: true, runValidators: true }
+    );
+    
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    // Return success response with updated profile image
+    res.status(200).json({
+      message: "Profile updated successfully",
+      profileImage: updatedUser.profileImage
+    });
+    
+  } catch (error) {
+    console.error("Profile update error:", error);
+    res.status(500).json({ message: "Error updating profile", error: error.message });
+  }
+});
+
+// Add this line in server.js when setting up routes
+// app.use('/api', userRoutes);  // This ensures the endpoint is accessible at /api/update-profile
 
 export default router;

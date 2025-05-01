@@ -1,5 +1,3 @@
-
-
 import { useNavigate, Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import "../styles/home.css";
@@ -17,7 +15,7 @@ const Home = () => {
   const topics = ["All", "Tech", "Sports", "Health", "Business", "Entertainment"];
   
   // News API key
-  const NEWS_API_KEY = "5bd82efb819e4371bf3374dcbbf50343";
+  const NEWS_API_KEY = "414e08f70360f69008a4c59b3d8e2dae";
 
   useEffect(() => {
     const fetchBlogs = async () => {

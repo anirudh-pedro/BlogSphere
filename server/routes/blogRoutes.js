@@ -33,7 +33,9 @@ router.get('/', async (req, res) => {
   try {
     const blogs = await Blog.find()
       .sort({ createdAt: -1 })  // Sort by 'createdAt' in descending order (most recent first)
-      .populate('author', 'username'); // 'username' from User model
+      .populate('author', 'username');
+     // 'username' from User model
+     console.log("Fetched Blogs:", blogs);
     res.status(200).json(blogs);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch blogs", error: error.message });
