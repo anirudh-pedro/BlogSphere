@@ -15,7 +15,7 @@ const Home = () => {
   const topics = ["All", "Tech", "Sports", "Health", "Business", "Entertainment"];
   
   // News API key
-  const NEWS_API_KEY = "414e08f70360f69008a4c59b3d8e2dae";
+  const NEWS_API_KEY = "77c3b0876c394d409c29298539669472";
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -288,9 +288,9 @@ const Home = () => {
                 </div>
               ))}
               
-              <Chat />
             </>
           )}
+          <Chat />
         </div>
       </div>
     </div>

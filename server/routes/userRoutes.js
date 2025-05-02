@@ -153,4 +153,19 @@ router.put("/update-profile", authenticateUser, verifyOwnership, async (req, res
 // Add this line in server.js when setting up routes
 // app.use('/api', userRoutes);  // This ensures the endpoint is accessible at /api/update-profile
 
+// Get Current User Profile (Using Token)
+router.get("/profile", authenticateUser, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select("username email profileImage");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user", error: error.message });
+  }
+});
+
+
+
 export default router;
