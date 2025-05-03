@@ -6,6 +6,7 @@ import blogRoutes from './routes/blogRoutes.js';
 import userRoutes from './routes/userRoutes.js';  // Updated import path
 import jwt from 'jsonwebtoken';
 import cookieParser from "cookie-parser";
+import statsRoutes from './routes/stats.js';
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.get('/health', (req, res) => {
 });
 
 // Routes
+app.use('/api/stats', statsRoutes);
 app.use('/api/users', userRoutes);
 app.use("/api/blogs", blogRoutes);
 

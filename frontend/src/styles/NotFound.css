@@ -1,0 +1,51 @@
+/* NotFound.css - you can either create this file or add these styles to your main CSS file */
+
+.not-found-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .not-found-content {
+    max-width: 500px;
+  }
+  
+  .not-found-content h1 {
+    font-size: 8rem;
+    margin: 0;
+    color: #ddd;
+    line-height: 1;
+  }
+  
+  .not-found-content h2 {
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .not-found-content p {
+    color: #666;
+    margin-bottom: 2rem;
+  }
+  
+  .not-found-actions {
+    margin-top: 2rem;
+  }
+  
+  .home-button {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+  
+  .home-button:hover {
+    background-color: #2980b9;
+  }

@@ -1,387 +1,520 @@
 /* User Stats Component Styling */
 .stats-container {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 30px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 30px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+/* Loading State */
+.stats-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  min-height: 200px;
+}
+
+.stats-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #03a87c;
+  animation: spin 1s ease-in-out infinite;
+  margin-bottom: 15px;
+}
+
+.stats-loading p {
+  color: #757575;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Stats Tabs */
+.stats-tabs {
+  display: flex;
+  border-bottom: 1px solid #e6e6e6;
+  margin-bottom: 20px;
+  gap: 5px;
+}
+
+.stats-tab-btn {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  color: #757575;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+  position: relative;
+  font-weight: 400;
+}
+
+.stats-tab-btn:hover {
+  color: #292929;
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.stats-tab-btn.active {
+  color: #292929;
+  border-bottom: 2px solid #03a87c;
+  font-weight: 500;
+}
+
+.stats-tab-btn:focus-visible {
+  outline: 2px solid #03a87c;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Stats Panel */
+.stats-panel {
+  display: none;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.stats-panel.active {
+  display: block;
+}
+
+.stats-panel-title {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  color: #292929;
+}
+
+/* Weekly Activity Chart */
+.weekly-chart {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 200px;
+  padding: 0 10px;
+  margin-bottom: 20px;
+  gap: 5px;
+}
+
+.day-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(100% / 7);
+  height: 100%;
+}
+
+.bar-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+}
+
+.activity-bar {
+  width: 100%;
+  max-width: 30px;
+  background-color: #03a87c;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s ease, background-color 0.2s;
+  position: relative;
+  min-height: 4px;
+}
+
+.activity-bar:hover {
+  background-color: #038f69;
+  opacity: 0.9;
+}
+
+.time-tooltip {
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #292929;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  z-index: 10;
+  font-weight: 400;
+}
+
+.time-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 4px;
+  border-style: solid;
+  border-color: #292929 transparent transparent transparent;
+}
+
+.activity-bar:hover .time-tooltip {
+  opacity: 1;
+}
+
+.day-label {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #757575;
+  text-align: center;
+  width: 100%;
+}
+
+/* Yearly Contribution Graph */
+.yearly-chart {
+  position: relative;
+  padding: 0 0 30px 25px;
+  margin-bottom: 15px;
+  overflow: hidden;
+}
+
+.contribution-grid {
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #e6e6e6 transparent;
+}
+
+.contribution-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.contribution-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.contribution-grid::-webkit-scrollbar-thumb {
+  background-color: #e6e6e6;
+  border-radius: 3px;
+}
+
+.day-labels {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(100% - 40px);
+  padding-bottom: 11px;
+}
+
+.day-labels .day-label {
+  font-size: 11px;
+  color: #757575;
+  text-align: left;
+  height: 13px;
+  line-height: 13px;
+  margin: 1px 0;
+}
+
+.week-column {
+  display: flex;
+  flex-direction: column;
+  margin-right: 3px;
+  min-width: 13px;
+}
+
+.contribution-cell {
+  width: 11px;
+  height: 11px;
+  margin: 1px;
+  border-radius: 2px;
+  background-color: #ebedf0;
+  position: relative;
+  transition: transform 0.1s;
+}
+
+.contribution-cell:hover {
+  transform: scale(1.1);
+}
+
+.contribution-cell.empty {
+  background-color: #ebedf0;
+}
+
+.contribution-cell.light {
+  background-color: #9be9a8;
+}
+
+.contribution-cell.medium {
+  background-color: #40c463;
+}
+
+.contribution-cell.dark {
+  background-color: #216e39;
+}
+
+.contribution-tooltip {
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #292929;
+  color: white;
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  z-index: 10;
+  width: max-content;
+  text-align: center;
+}
+
+.contribution-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 4px;
+  border-style: solid;
+  border-color: #292929 transparent transparent transparent;
+}
+
+.contribution-cell:hover .contribution-tooltip {
+  opacity: 1;
+}
+
+.tooltip-date {
+  font-weight: 500;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+.tooltip-count {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.month-labels {
+  display: grid;
+  grid-template-columns: repeat(53, 13px);
+  grid-gap: 3px;
+  position: relative;
+  height: 20px;
+  margin-top: 5px;
+  width: calc(53 * 16px);
+  max-width: 100%;
+}
+
+.month-label {
+  font-size: 11px;
+  color: #757575;
+  text-align: left;
+  grid-column-end: span 4;
+  padding-left: 2px;
+}
+
+/* Legend for contribution levels */
+.contribution-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  padding-top: 5px;
+  gap: 5px;
+}
+
+.legend-label {
+  font-size: 11px;
+  color: #757575;
+}
+
+.legend-cells {
+  display: flex;
+  margin: 0 5px;
+  gap: 3px;
+}
+
+.legend-cells .contribution-cell {
+  margin: 0;
+}
+
+/* Summary stats */
+.stats-summary {
+  border-top: 1px solid #e6e6e6;
+  padding-top: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.summary-item {
+  flex: 1;
+  min-width: 200px;
+}
+
+.summary-label {
+  font-size: 14px;
+  color: #757575;
+  margin-right: 5px;
+}
+
+.summary-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #292929;
+}
+
+/* Error state */
+.stats-error {
+  background-color: #fff8f8;
+  border: 1px solid #ffdddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #d32f2f;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.stats-error p {
+  margin: 0 0 10px;
+}
+
+.retry-btn {
+  background-color: #03a87c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.retry-btn:hover {
+  background-color: #038f69;
+}
+
+.retry-btn:focus-visible {
+  outline: 2px solid #03a87c;
+  outline-offset: 2px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-  
-  /* Loading State */
-  .stats-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 0;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .stats-loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(0, 0, 0, 0.1);
-    border-radius: 50%;
-    border-top-color: #03a87c;
-    animation: spin 1s ease-in-out infinite;
-    margin-bottom: 15px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  /* Stats Tabs */
-  .stats-tabs {
-    display: flex;
-    border-bottom: 1px solid #e6e6e6;
-    margin-bottom: 20px;
-  }
-  
-  .stats-tab-btn {
-    padding: 10px 20px;
-    background: none;
-    border: none;
-    font-size: 15px;
-    cursor: pointer;
-    color: #757575;
-    transition: all 0.2s;
-    border-bottom: 2px solid transparent;
-  }
-  
-  .stats-tab-btn:hover {
-    color: #292929;
-  }
-  
-  .stats-tab-btn.active {
-    color: #292929;
-    border-bottom: 2px solid #03a87c;
-    font-weight: 500;
-  }
-  
-  /* Stats Panel */
-  .stats-panel {
-    display: none;
-    animation: fadeIn 0.3s ease-in-out;
-  }
-  
-  .stats-panel.active {
-    display: block;
-  }
-  
-  .stats-panel-title {
-    font-size: 18px;
-    font-weight: 500;
-    margin-bottom: 20px;
-    color: #292929;
-  }
-  
-  /* Weekly Activity Chart */
+}
+
+/* Accessibility Improvements */
+[role="tab"][aria-selected="true"] {
+  position: relative;
+}
+
+[role="tabpanel"]:focus {
+  outline: none;
+}
+
+[role="gridcell"]:focus {
+  outline: 2px solid #03a87c;
+  outline-offset: 1px;
+  z-index: 2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
   .weekly-chart {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    height: 200px;
-    padding: 0 10px;
-    margin-bottom: 20px;
-  }
-  
-  .day-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: calc(100% / 7);
-  }
-  
-  .bar-container {
     height: 180px;
-    width: 100%;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
   }
-  
+
   .activity-bar {
-    width: 20px;
-    max-width: 80%;
-    background-color: #03a87c;
-    border-radius: 4px 4px 0 0;
-    transition: height 0.3s ease;
-    position: relative;
-    min-height: 4px;
+    max-width: 20px;
   }
-  
-  .activity-bar:hover {
-    background-color: #038f69;
+
+  .contribution-cell {
+    width: 9px;
+    height: 9px;
   }
-  
-  .time-tooltip {
-    position: absolute;
-    bottom: calc(100% + 5px);
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #292929;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.2s;
-    pointer-events: none;
+
+  .stats-summary {
+    flex-direction: column;
+    gap: 10px;
   }
-  
-  .time-tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 4px;
-    border-style: solid;
-    border-color: #292929 transparent transparent transparent;
+
+  .summary-item {
+    min-width: 100%;
   }
-  
-  .activity-bar:hover .time-tooltip {
-    opacity: 1;
+}
+
+@media (max-width: 576px) {
+  .stats-container {
+    padding: 15px;
   }
-  
-  .day-label {
-    margin-top: 8px;
-    font-size: 12px;
-    color: #757575;
+
+  .stats-tab-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+    flex: 1;
+    text-align: center;
   }
-  
-  /* Yearly Contribution Graph (LeetCode-style) */
-  .yearly-chart {
-    position: relative;
-    padding: 0 10px 30px;
+
+  .stats-panel-title {
+    font-size: 16px;
     margin-bottom: 15px;
   }
-  
-  .contribution-grid {
-    display: flex;
-    overflow-x: auto;
-    padding-left: 25px; /* Space for day labels */
-    padding-bottom: 10px;
+
+  .weekly-chart {
+    height: 150px;
+    padding: 0;
   }
-  
-  .day-labels {
-    position: absolute;
-    left: 0;
-    top: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: calc(100% - 40px);
+
+  .activity-bar {
+    max-width: 15px;
   }
-  
-  .day-labels .day-label {
-    font-size: 11px;
-    color: #757575;
-    text-align: left;
-    height: 13px;
-  }
-  
-  .week-column {
-    display: flex;
-    flex-direction: column;
-    margin-right: 3px;
-  }
-  
-  .contribution-cell {
-    width: 11px;
-    height: 11px;
-    margin: 1px;
-    border-radius: 2px;
-    background-color: #ebedf0;
-    position: relative;
-  }
-  
-  .contribution-cell.empty {
-    background-color: #ebedf0;
-  }
-  
-  .contribution-cell.light {
-    background-color: #9be9a8;
-  }
-  
-  .contribution-cell.medium {
-    background-color: #40c463;
-  }
-  
-  .contribution-cell.dark {
-    background-color: #216e39;
-  }
-  
-  .contribution-tooltip {
-    position: absolute;
-    bottom: calc(100% + 5px);
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #292929;
-    color: white;
-    padding: 8px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.2s;
-    pointer-events: none;
-    z-index: 10;
-    width: max-content;
-  }
-  
-  .contribution-tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 4px;
-    border-style: solid;
-    border-color: #292929 transparent transparent transparent;
-  }
-  
-  .contribution-cell:hover .contribution-tooltip {
-    opacity: 1;
-  }
-  
-  .tooltip-date {
-    font-weight: 500;
-    margin-bottom: 4px;
-  }
-  
-  .tooltip-count {
+
+  .day-label {
     font-size: 11px;
   }
-  
+
   .month-labels {
-    display: flex;
-    position: relative;
-    height: 20px;
-    margin-top: 5px;
+    grid-template-columns: repeat(53, 9px);
+    width: calc(53 * 12px);
   }
-  
+
   .month-label {
-    position: absolute;
-    font-size: 12px;
-    color: #757575;
+    font-size: 10px;
   }
-  
-  /* Legend for contribution levels */
-  .contribution-legend {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    padding-top: 5px;
+}
+
+@media (max-width: 400px) {
+  .weekly-chart {
+    height: 120px;
   }
-  
-  .legend-label {
-    font-size: 12px;
-    color: #757575;
-    margin: 0 5px;
+
+  .stats-tab-btn {
+    padding: 6px 8px;
+    font-size: 13px;
   }
-  
-  .legend-cells {
-    display: flex;
-    margin: 0 5px;
-  }
-  
-  .legend-cells .contribution-cell {
-    margin: 0 1px;
-  }
-  
-  /* Summary stats */
-  .stats-summary {
-    border-top: 1px solid #e6e6e6;
-    padding-top: 15px;
-    display: flex;
-    flex-wrap: wrap;
-  }
-  
-  .summary-item {
-    flex: 1;
-    min-width: 200px;
-    margin-bottom: 10px;
-  }
-  
-  .summary-label {
-    font-size: 14px;
-    color: #757575;
-    margin-right: 5px;
-  }
-  
-  .summary-value {
-    font-size: 14px;
-    font-weight: 500;
-    color: #292929;
-  }
-  
-  /* Error state */
-  .stats-error {
-    background-color: #fff8f8;
-    border: 1px solid #ffdddd;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #d32f2f;
-  }
-  
-  /* Animations */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .weekly-chart {
-      height: 150px;
-    }
-    
-    .activity-bar {
-      width: 15px;
-    }
-    
-    .contribution-cell {
-      width: 9px;
-      height: 9px;
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .stats-container {
-      padding: 15px;
-    }
-    
-    .stats-tab-btn {
-      padding: 8px 15px;
-      font-size: 14px;
-    }
-    
-    .stats-panel-title {
-      font-size: 16px;
-    }
-    
-    .summary-item {
-      min-width: 100%;
-    }
-    
-    .weekly-chart {
-      height: 120px;
-    }
-    
-    .activity-bar {
-      width: 10px;
-    }
-  }
+}

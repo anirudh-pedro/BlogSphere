@@ -90,7 +90,7 @@ router.post("/refresh-token", (req, res) => {
     const newAccessToken = jwt.sign(
       { userId: decoded.userId },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "5h" }
     );
 
     res.json({ token: newAccessToken });
