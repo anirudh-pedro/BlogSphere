@@ -178,13 +178,14 @@
   position: relative;
   padding: 0 0 30px 25px;
   margin-bottom: 15px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .contribution-grid {
   display: flex;
   overflow-x: auto;
   padding-bottom: 10px;
+  padding-top: 30px; 
   scrollbar-width: thin;
   scrollbar-color: #e6e6e6 transparent;
 }
@@ -237,10 +238,12 @@
   background-color: #ebedf0;
   position: relative;
   transition: transform 0.1s;
+  z-index: 1;
 }
 
 .contribution-cell:hover {
   transform: scale(1.1);
+  z-index: 20;
 }
 
 .contribution-cell.empty {
@@ -261,7 +264,7 @@
 
 .contribution-tooltip {
   position: absolute;
-  bottom: calc(100% + 5px);
+  bottom: calc(100% + 5px); /* Default position above the cell */
   left: 50%;
   transform: translateX(-50%);
   background-color: #292929;
@@ -273,7 +276,7 @@
   opacity: 0;
   transition: opacity 0.2s;
   pointer-events: none;
-  z-index: 10;
+  z-index: 100; /* High z-index to appear above other elements */
   width: max-content;
   text-align: center;
 }
@@ -289,8 +292,20 @@
   border-color: #292929 transparent transparent transparent;
 }
 
+.week-column:nth-child(n) > .contribution-cell:nth-child(-n+2) .contribution-tooltip::after {
+  top: auto;
+  bottom: 100%;
+  border-color: transparent transparent #292929 transparent;
+}
+
 .contribution-cell:hover .contribution-tooltip {
   opacity: 1;
+  z-index: 100;
+}
+
+.week-column:nth-child(n) > .contribution-cell:nth-child(-n+2) .contribution-tooltip {
+  bottom: auto;
+  top: calc(100% + 5px); /* Position below instead of above */
 }
 
 .tooltip-date {
