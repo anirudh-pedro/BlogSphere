@@ -77,6 +77,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import '../styles/blogDetails.css';
 import { API_BASE_URL } from "../config/api";
+import Comments from '../components/Comments';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
 const BlogDetail = () => {
   const { id } = useParams(); // Get blog ID from the URL
@@ -84,6 +86,41 @@ const BlogDetail = () => {
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+
+  const handleLike = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        navigate('/signin');
+        return;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/blogs/interactions/${id}/like`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        setLiked(data.liked);
+        setLikeCount(data.likes);
+      } else {
+        console.error('Failed to update like:', data.message);
+        if (response.status === 401) {
+          navigate('/signin');
+        }
+      }
+    } catch (err) {
+      console.error('Error liking blog:', err);
+    }
+  };
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -146,6 +183,20 @@ const BlogDetail = () => {
       <div className="blog-content">
         <p dangerouslySetInnerHTML={{ __html: blog.content }} />
       </div>
+
+      {/* Like Button */}
+      <div className="blog-actions">
+        <button 
+          className={`like-button ${liked ? 'liked' : ''}`} 
+          onClick={handleLike}
+        >
+          {liked ? <FaHeart /> : <FaRegHeart />}
+          <span>{likeCount} likes</span>
+        </button>
+      </div>
+
+      {/* Comments Section */}
+      <Comments blogId={id} user={blog.author} />
     </div>
   );
 };

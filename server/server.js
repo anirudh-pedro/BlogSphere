@@ -3,10 +3,13 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import blogRoutes from './routes/blogRoutes.js';
-import userRoutes from './routes/userRoutes.js';  // Updated import path
+import userRoutes from './routes/userRoutes.js';
 import jwt from 'jsonwebtoken';
 import cookieParser from "cookie-parser";
 import statsRoutes from './routes/stats.js';
+import likeCommentRoutes from './routes/likeCommentRoutes.js';
+import { apiLimiter, authLimiter, commentLimiter } from './middleware/rateLimiter.js';
+import helmet from 'helmet';
 
 dotenv.config();
 
@@ -27,6 +30,12 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser()); // ✅ Enable cookies parsing
+app.use(helmet()); // Add security headers
+
+// Apply rate limiting
+app.use('/api/', apiLimiter); // General API rate limiting
+app.use('/api/users/(signin|register)', authLimiter); // Auth endpoints rate limiting
+app.use('/api/blogs/interactions/:id/comments', commentLimiter); // Comment rate limiting
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -36,7 +45,8 @@ app.get('/health', (req, res) => {
 // Routes
 app.use('/api/stats', statsRoutes);
 app.use('/api/users', userRoutes);
-app.use("/api/blogs", blogRoutes);
+app.use('/api/blogs/interactions', likeCommentRoutes); // Mount likeCommentRoutes with a distinct path
+app.use('/api/blogs', blogRoutes); // Then mount blogRoutes
 
 // Global error handler
 app.use((err, req, res, next) => {

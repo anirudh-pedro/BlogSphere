@@ -25,9 +25,13 @@ function App() {
         if (loggedInUser) {
           setUser(loggedInUser);
           
-          // Initialize activity tracker with user token
+          // Initialize activity tracker with user token and debug mode
           if (loggedInUser.token) {
-            activityTracker.init(loggedInUser.token);
+            activityTracker.init(loggedInUser.token, {
+              debugMode: true, // Enable debug mode to help diagnose issues
+              retryAttempts: 3,  // Number of retry attempts for failed requests
+              retryDelay: 2000   // Delay between retries in milliseconds
+            });
           }
         }
       } catch (error) {
@@ -39,6 +43,18 @@ function App() {
       }
     };
 
+    // Add listener for activity tracker auth errors
+    const handleAuthError = () => {
+      const currentUser = JSON.parse(localStorage.getItem("user"));
+      if (currentUser && currentUser.token) {
+        activityTracker.init(currentUser.token);
+      } else {
+        // If no valid user data is found, redirect to signin
+        handleLogout();
+      }
+    };
+
+    window.addEventListener('activity-tracker-auth-error', handleAuthError);
     fetchUser();
     
     // Cleanup activity tracker when component unmounts

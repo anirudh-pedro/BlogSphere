@@ -65,17 +65,34 @@ const blogSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
-  likes: {
-    type: Number,
-    default: 0
-  },
-  comments: [{
+  likes: [{
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     },
-    text: String,
     createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  comments: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: [true, 'User ID is required']
+    },
+    text: {
+      type: String,
+      required: [true, 'Comment text is required'],
+      trim: true,
+      minlength: [1, 'Comment cannot be empty'],
+      maxlength: [1000, 'Comment cannot exceed 1000 characters']
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    },
+    updatedAt: {
       type: Date,
       default: Date.now
     }

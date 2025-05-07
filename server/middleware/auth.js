@@ -76,8 +76,13 @@ export const authenticateUser = (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Add user data to request object
-    req.user = decoded;
+    // Add user data to request object with consistent property naming
+    req.user = {
+      id: decoded.userId, // Map userId to id for consistency
+      userId: decoded.userId,
+      username: decoded.username,
+      email: decoded.email
+    };
     
     // Proceed to the next middleware/route handler
     next();
