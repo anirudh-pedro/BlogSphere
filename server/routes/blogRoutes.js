@@ -1,6 +1,7 @@
 import express from 'express';
 import Blog from '../models/Blog.js';
 import { authenticateUser } from '../middleware/auth.js';
+import User from '../models/User.js';
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ router.post('/create', authenticateUser, async (req, res) => {
       content,
       image,
       imageDescription,
-      author: req.user.userId  // Taken from JWT
+      author: req.user.userId
     });
 
     const savedBlog = await newBlog.save();
@@ -32,18 +33,98 @@ router.post('/create', authenticateUser, async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const blogs = await Blog.find()
-      .sort({ createdAt: -1 })  // Sort by 'createdAt' in descending order (most recent first)
+      .sort({ createdAt: -1 })
       .populate('author', 'username');
-     // 'username' from User model
-     console.log("Fetched Blogs:", blogs);
+    console.log("Fetched Blogs:", blogs);
     res.status(200).json(blogs);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch blogs", error: error.message });
   }
 });
 
+// SEARCH API - this must come BEFORE the /:id route
+router.get('/search', authenticateUser, async (req, res) => {
+  try {
+    const { term } = req.query;
+    
+    if (!term || term.length < 2) {
+      return res.status(400).json({ message: 'Search term must be at least 2 characters' });
+    }
+    
+    console.log(`Searching for term: "${term}"`);
+    
+    // Create a case-insensitive regex for the search term
+    const searchRegex = new RegExp(term, 'i');
+    
+    // Search for blogs matching the term in title, topic, or content
+    const blogs = await Blog.find({
+      $or: [
+        { title: searchRegex },
+        { topic: searchRegex },
+        { content: searchRegex }
+      ]
+    }).populate('author', 'username').limit(10);
+    
+    // Also search for blogs by author username
+    const authorBlogs = await User.aggregate([
+      { $match: { username: searchRegex } },
+      { $lookup: {
+          from: 'blogs',
+          localField: '_id',
+          foreignField: 'author',
+          as: 'authorBlogs'
+        }
+      },
+      { $unwind: '$authorBlogs' },
+      { $replaceRoot: { newRoot: '$authorBlogs' } }
+    ]);
+    
+    // Get the populated author data for authorBlogs
+    const populatedAuthorBlogs = await Blog.populate(authorBlogs, {
+      path: 'author',
+      select: 'username'
+    });
+    
+    // Combine results and remove duplicates
+    const allBlogs = [...blogs];
+    populatedAuthorBlogs.forEach(blog => {
+      if (!allBlogs.some(b => b._id.toString() === blog._id.toString())) {
+        allBlogs.push(blog);
+      }
+    });
+    
+    console.log(`Search results: ${allBlogs.length} blogs found`);
+    return res.json(allBlogs.slice(0, 10)); // Limit to top 10 results
+  } catch (error) {
+    console.error('Search error:', error);
+    return res.status(500).json({ message: 'Server error during search' });
+  }
+});
 
-// GET /api/blogs/:id
+// User blogs route
+router.get('/user/:userId', authenticateUser, async (req, res) => {
+  try {
+    if (req.params.userId !== req.user.userId) {
+      return res.status(403).json({ 
+        message: "You are not authorized to view these posts" 
+      });
+    }
+    
+    const blogs = await Blog.find({ author: req.params.userId })
+      .sort({ createdAt: -1 })
+      .populate('author', 'username');
+      
+    return res.status(200).json(blogs);
+  } catch (error) {
+    console.error('Error fetching user blogs:', error);
+    return res.status(500).json({ 
+      message: "Failed to fetch user's blogs", 
+      error: error.message 
+    });
+  }
+});
+
+// GET blog by ID - must come after other specific routes
 router.get('/:id', async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id).populate('author', 'username');
@@ -56,7 +137,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// PUT /api/blogs/:id
+// Update blog
 router.put('/:id', authenticateUser, async (req, res) => {
   try {
     const { title, topic, content, image, imageDescription } = req.body;
@@ -83,63 +164,7 @@ router.put('/:id', authenticateUser, async (req, res) => {
   }
 });
 
-// Add this to your blogRoutes.js file
-
-// GET /api/blogs/user/:userId
-// router.get('/user/:userId', authenticateUser, async (req, res) => {
-//   try {
-//     // Ensure the requested userId matches the authenticated user
-//     if (req.params.userId !== req.user.userId) {
-//       return res.status(403).json({ 
-//         message: "You are not authorized to view these posts" 
-//       });
-//     }
-    
-//     const blogs = await Blog.find({ author: req.params.userId })
-//       .sort({ createdAt: -1 })
-//       .populate('author', 'username');
-      
-//     res.status(200).json(blogs);
-//   } catch (error) {
-//     res.status(500).json({ 
-//       message: "Failed to fetch user's blogs", 
-//       error: error.message 
-//     });
-//   }
-// });
-
-
-// Add this to your blogRoutes.js file
-
-// GET /api/blogs/user/:userId
-router.get('/user/:userId', authenticateUser, async (req, res) => {
-  try {
-    // Check if the requested userId matches the authenticated user
-    // This is optional security - remove if you want users to be able to view other users' posts
-    if (req.params.userId !== req.user.userId) {
-      return res.status(403).json({ 
-        message: "You are not authorized to view these posts" 
-      });
-    }
-    
-    // Find blogs by the author field matching userId
-    const blogs = await Blog.find({ author: req.params.userId })
-      .sort({ createdAt: -1 })
-      .populate('author', 'username');
-      
-    // Return the blogs
-    res.status(200).json(blogs);
-  } catch (error) {
-    console.error('Error fetching user blogs:', error);
-    res.status(500).json({ 
-      message: "Failed to fetch user's blogs", 
-      error: error.message 
-    });
-  }
-});
-// Note: Add this route to your existing blogRoutes.js file
-
-// DELETE /api/blogs/:id
+// Delete blog
 router.delete('/:id', authenticateUser, async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);

@@ -89,7 +89,7 @@ const BlogDetail = () => {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
-  const handleLike = async () => {
+    const handleLike = async () => {
     try {
       const token = localStorage.getItem('accessToken');
       if (!token) {
